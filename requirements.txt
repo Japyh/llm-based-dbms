@@ -15,6 +15,7 @@ fastapi
 # Utilities
 pandas
 python-dotenv
+openai
 matplotlib
 plotly
 pytest
