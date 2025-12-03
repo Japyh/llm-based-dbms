@@ -96,41 +96,55 @@ streamlit run app.py
 
 ```text
 .
-├── app.py                    # Streamlit entrypoint
-├── notebooks/                # Jupyter notebooks for experiments
-│   ├── 01-baseline-test.ipynb
-│   └── 02-fine-tuning.ipynb
-├── requirements.txt          # Python dependencies
-├── src/                      # Core Python modules
+### 📁 Project Structure
+
+```text
+.
+├── app.py                      # Streamlit entrypoint
+├── requirements.txt            # Python dependencies
+├── data/                       # Local SQLite DB + training datasets
+│   ├── sales.db                # Main sales database (SQLite)
+│   └── nl2sql_train_chat_raw.jsonl   # Chat-style fine-tuning dataset
+├── docs/                       # Project & experiment documentation
+│   └── DATASET_SUMMARY.md      # Summary & statistics of the NL2SQL dataset
+├── notebooks/                  # Jupyter notebooks for experiments
+│   ├── 01-baseline-test.ipynb  # Zero-shot / base model experiments
+│   └── 02-fine-tuning.ipynb    # Fine-tuning pipeline + evaluation
+├── scripts/                    # Helper scripts for dataset debugging
+│   ├── analyze_dataset.py      # Stats & pattern breakdown of JSONL dataset
+│   ├── check_dataset.py        # Quick preview of sample training examples
+│   ├── show_variants.py        # Show NL paraphrases for the same SQL
+│   └── test_dataset.py         # Execute SQL from dataset against sales.db
+├── src/                        # Core Python modules
 │   ├── __init__.py
-│   ├── app/                  # User-facing interfaces (APIs, CLI, Streamlit UI)
+│   ├── app/                    # User-facing interfaces (APIs, CLI, Streamlit UI)
 │   │   ├── __init__.py
 │   │   ├── api.py
 │   │   ├── cli_nl.py
 │   │   ├── cli_sql.py
 │   │   └── ui_streamlit.py
-│   ├── config.py             # Application configuration
-│   ├── database.py           # Database bootstrap utilities
-│   ├── db/                   # Database access helpers
+│   ├── config.py               # Application configuration (paths, model IDs, keys)
+│   ├── database.py             # (Legacy) database bootstrap utilities
+│   ├── db/                     # Database access helpers
 │   │   ├── __init__.py
-│   │   ├── core.py
-│   │   └── inspect_db.py
-│   ├── llm/                  # LLM provider abstraction
+│   │   ├── core.py             # Connection + run_query helpers
+│   │   └── inspect_db.py       # Introspect schema of sales.db
+│   ├── llm/                    # LLM provider abstraction
 │   │   ├── __init__.py
-│   │   └── provider.py
-│   ├── llm_chain.py          # LangChain prompts and orchestration
-│   ├── nl2sql/               # Natural language → SQL engine
+│   │   └── provider.py         # Wrapper for calling base / fine-tuned models
+│   ├── llm_chain.py            # LangChain prompts and orchestration
+│   ├── nl2sql/                 # Natural language → SQL engine
 │   │   ├── __init__.py
 │   │   ├── engine.py
 │   │   └── prompt_templates.py
-│   ├── training/             # Dataset creation utilities
+│   ├── training/               # Dataset creation & fine-tuning utilities
 │   │   ├── __init__.py
-│   │   └── dataset_builder.py
-│   ├── validation/           # Rule-based SQL validation
+│   │   └── dataset_builder.py  # Builds chat-style NL2SQL training JSONL
+│   ├── validation/             # Rule-based SQL validation
 │   │   ├── __init__.py
 │   │   └── sql_validator.py
-│   └── validator.py          # Legacy validation entrypoint
-└── tests/                    # Unit tests
+│   └── validator.py            # Legacy validation entrypoint (backwards compatibility)
+└── tests/                      # Unit tests
     ├── __init__.py
     ├── test_db.py
     ├── test_nl2sql.py
