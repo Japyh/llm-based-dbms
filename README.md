@@ -94,23 +94,42 @@ streamlit run app.py
 📁 Project Structure
 
 .
-├── app.py              # The main Streamlit application
-├── .env                # Secret keys (e.g., API keys)
-├── .gitignore          # Files to be ignored by Git
-├── README.md           # This file
-├── requirements.txt    # Python dependencies
-├── data/               # Holds raw data and the SQLite DB
-│   └── sales.sqlite3
-├── docs/               # Project proposals and design documents
-│   └── Derya_Umut_Kulali_LLM_based_DBMS.pdf
-│   └── EEEPRJ13.pdf
-├── notebooks/          # Jupyter notebooks for experiments
+├── app.py               # Streamlit entrypoint
+├── notebooks/           # Jupyter notebooks for experiments
 │   ├── 01-baseline-test.ipynb
 │   └── 02-fine-tuning.ipynb
-├── src/                # Core Python modules
+├── requirements.txt     # Python dependencies
+├── src/                 # Core Python modules
 │   ├── __init__.py
-│   ├── database.py       # DB connection, schema, and data loading
-│   ├── llm_chain.py      # LangChain prompts and model logic
-│   └── validator.py      # The security firewall (Rule-Based Validator)
-└── tests/              # Unit tests
+│   ├── app/             # User-facing interfaces (APIs, CLI, Streamlit UI)
+│   │   ├── __init__.py
+│   │   ├── api.py
+│   │   ├── cli_nl.py
+│   │   ├── cli_sql.py
+│   │   └── ui_streamlit.py
+│   ├── config.py        # Application configuration
+│   ├── database.py      # Database bootstrap utilities
+│   ├── db/              # Database access helpers
+│   │   ├── __init__.py
+│   │   ├── core.py
+│   │   └── inspect_db.py
+│   ├── llm/             # LLM provider abstraction
+│   │   ├── __init__.py
+│   │   └── provider.py
+│   ├── llm_chain.py     # LangChain prompts and orchestration
+│   ├── nl2sql/          # Natural language → SQL engine
+│   │   ├── __init__.py
+│   │   ├── engine.py
+│   │   └── prompt_templates.py
+│   ├── training/        # Dataset creation utilities
+│   │   ├── __init__.py
+│   │   └── dataset_builder.py
+│   ├── validation/      # Rule-based SQL validation
+│   │   ├── __init__.py
+│   │   └── sql_validator.py
+│   └── validator.py     # Legacy validation entrypoint
+└── tests/               # Unit tests
+    ├── __init__.py
+    ├── test_db.py
+    ├── test_nl2sql.py
     └── test_validator.py
