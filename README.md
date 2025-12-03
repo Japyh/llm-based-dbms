@@ -96,10 +96,6 @@ streamlit run app.py
 
 ```text
 .
-### 📁 Project Structure
-
-```text
-.
 ├── app.py                      # Streamlit entrypoint
 ├── requirements.txt            # Python dependencies
 ├── data/                       # Local SQLite DB + training datasets
