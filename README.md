@@ -94,7 +94,6 @@ streamlit run app.py
 
 ### 📁 Project Structure
 
-.
 ├── app.py               # Streamlit entrypoint
 ├── notebooks/           # Jupyter notebooks for experiments
 │   ├── 01-baseline-test.ipynb
