@@ -4,28 +4,28 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Status: In-Development](https://img.shields.io/badge/Status-In_Development-green.svg)
 
-[cite_start]This repository contains the code for an intelligent Database Management System (DBMS) that translates **natural language questions into secure SQL queries**[cite: 16].
+This repository contains the code for an intelligent Database Management System (DBMS) that translates **natural language questions into secure SQL queries**.
 
-[cite_start]This system is designed to make data accessible to non-technical users, removing the barrier of needing to know SQL[cite: 17, 163]. [cite_start]It is the subject of a 4th-year Electrical and Electronics Engineering Design Project at Eskişehir Technical University  [cite_start]and a TÜBİTAK 2209-A research project.
+The system is designed to make data accessible to non-technical users, removing the barrier of needing to know SQL. It is the subject of a 4th-year Electrical and Electronics Engineering Design Project at Eskişehir Technical University and a TÜBİTAK 2209-A research project.
 
 ## 🎯 Core Features
 
-* [cite_start]**Natural Language to SQL:** Uses advanced LLMs (like Llama 3, GPT-4, and Mistral [cite: 19, 86, 163]) to understand user intent and generate corresponding SQL queries.
-* [cite_start]**Security Firewall:** A key feature is the **Rule-Based Query Validator**[cite: 22, 93, 163]. [cite_start]This layer intercepts and blocks unsafe SQL (e.g., `DROP`, `UPDATE`) to prevent errors or malicious commands, addressing a primary risk of LLM-based systems[cite: 26, 124].
-* [cite_start]**Smart Orchestration:** Leverages `LangChain` to manage the end-to-end process: user input -> LLM prompting -> validation -> database execution[cite: 23, 63, 92].
-* [cite_start]**Lightweight & Portable:** Built on a `SQLite3` database backend, making it easy to set up and test[cite: 21, 67, 94].
-* [cite_start]**Interactive UI:** Provides a simple web interface for query input and result visualization[cite: 90, 95].
+* **Natural Language to SQL:** Uses advanced LLMs (like Llama 3, GPT-4, and Mistral) to understand user intent and generate corresponding SQL queries.
+* **Security Firewall:** A key feature is the **Rule-Based Query Validator**. This layer intercepts and blocks unsafe SQL (e.g., `DROP`, `UPDATE`) to prevent errors or malicious commands, addressing a primary risk of LLM-based systems.
+* **Smart Orchestration:** Leverages `LangChain` to manage the end-to-end process: user input -> LLM prompting -> validation -> database execution.
+* **Lightweight & Portable:** Built on a `SQLite3` database backend, making it easy to set up and test.
+* **Interactive UI:** Provides a simple web interface for query input and result visualization.
 
 ## 🏛️ System Architecture
 
-[cite_start]The data flow is designed for accuracy and security, based on the project's architectural diagram[cite: 96]:
+The data flow is designed for accuracy and security:
 
-1.  [cite_start]**User Interface:** The user enters a query in natural language (e.g., "How many sales did we have last month?")[cite: 90].
-2.  [cite_start]**LLM Model:** The query, along with the database schema, is sent to the LLM (e.g., Llama 3)[cite: 91]. The model generates a SQL query.
-3.  [cite_start]**LangChain Middle Layer:** Manages this interaction and orchestrates the flow[cite: 92].
-4.  [cite_start]**Rule-Based Query Validator:** The generated SQL is intercepted and checked for safety and consistency (e.g., no `DELETE`, `DROP`, etc.)[cite: 93, 124].
-5.  [cite_start]**Database Execution:** If the query is safe, it's run against the `SQLite3` database[cite: 94].
-6.  [cite_start]**Results / Visualization:** The data is returned to the user, often as a table or a visual chart[cite: 95].
+1.  **User Interface:** The user enters a query in natural language (e.g., "How many sales did we have last month?").
+2.  **LLM Model:** The query, along with the database schema, is sent to the LLM (e.g., Llama 3). The model generates a SQL query.
+3.  **LangChain Middle Layer:** Manages this interaction and orchestrates the flow.
+4.  **Rule-Based Query Validator:** The generated SQL is intercepted and checked for safety and consistency (e.g., no `DELETE`, `DROP`, etc.).
+5.  **Database Execution:** If the query is safe, it's run against the `SQLite3` database.
+6.  **Results / Visualization:** The data is returned to the user, often as a table or a visual chart.
 
 ## 🛠️ Technology Stack
 
@@ -33,7 +33,7 @@
 | :--- | :--- |
 | Core Logic | Python 3.10+ |
 | LLM & Orchestration | LangChain, Hugging Face `transformers`, PyTorch |
-| Database | [cite_start]`SQLite3` [cite: 21, 47, 67] |
+| Database | `SQLite3` |
 | Web Interface | `Streamlit` |
 | Data Handling | `Pandas` |
 | Dev & Test | `pytest`, `python-dotenv` |
@@ -80,7 +80,7 @@
     ```
 
 2.  **Populate the database:**
-    [cite_start]This project uses a "sales products" dataset[cite: 21, 77]. Run the following command *once* to create the `sales.sqlite3` database and populate it with data:
+    This project uses a "sales products" dataset. Run the following command *once* to create the `sales.sqlite3` database and populate it with data:
     ```bash
     python -m src.database --populate
     ```
@@ -90,8 +90,9 @@
 Run the Streamlit web app:
 ```bash
 streamlit run app.py
+```
 
-📁 Project Structure
+### 📁 Project Structure
 
 .
 ├── app.py               # Streamlit entrypoint
