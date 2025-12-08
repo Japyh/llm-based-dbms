@@ -79,4 +79,15 @@ def get_settings() -> Settings:
     return _settings_instance
 
 
-__all__ = ["Settings", "get_settings"]
+# Fine-tuning configuration
+# Project root directory
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# HF base model used for fine-tuning in Kaggle (shared between training and inference)
+BASE_HF_NL2SQL_MODEL = "mistralai/Mistral-7B-Instruct-v0.2"
+
+# Local adapter directory where Kaggle fine-tuned LoRA will be placed
+LOCAL_NL2SQL_ADAPTER_DIR = BASE_DIR / "models" / "nl2sql-mistral-lora"
+
+
+__all__ = ["Settings", "get_settings", "BASE_DIR", "BASE_HF_NL2SQL_MODEL", "LOCAL_NL2SQL_ADAPTER_DIR"]
