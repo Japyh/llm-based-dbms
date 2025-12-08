@@ -99,24 +99,49 @@ class LocalHFLLMProvider(LLMProvider):
         self.model = None
     
     def _ensure_loaded(self):
-        """
-        Lazy load the model and tokenizer on first use.
-        
-        TODO: Implement full loading logic:
-        - from transformers import AutoTokenizer, AutoModelForCausalLM
-        - from peft import PeftModel
-        - Load tokenizer
-        - Load base model (optionally with 4-bit/8-bit quantization)
-        - Load PEFT adapter
-        """
+        """Lazy load the model and tokenizer on first use."""
         if self.model is not None:
             return
         
-        # Placeholder - to be implemented after Kaggle fine-tuning
-        raise NotImplementedError(
-            "LocalHFLLMProvider model loading not yet implemented. "
-            "This will be completed after Kaggle fine-tuning produces the adapter."
+        logger.info("Loading fine-tuned model from %s with adapter from %s", 
+                    self.base_model_name, self.adapter_dir)
+        
+        try:
+            from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
+            from peft import PeftModel
+            import torch
+        except ImportError as e:
+            raise ImportError(
+                "Required packages not installed. Run: "
+                "pip install transformers peft bitsandbytes accelerate torch"
+            ) from e
+        
+        # Load tokenizer
+        logger.info("Loading tokenizer...")
+        self.tokenizer = AutoTokenizer.from_pretrained(self.adapter_dir)
+        
+        # Load base model with 4-bit quantization for memory efficiency
+        logger.info("Loading base model with 4-bit quantization...")
+        bnb_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_use_double_quant=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.bfloat16
         )
+        
+        base_model = AutoModelForCausalLM.from_pretrained(
+            self.base_model_name,
+            quantization_config=bnb_config,
+            device_map="auto",
+            torch_dtype=torch.bfloat16
+        )
+        
+        # Load fine-tuned LoRA adapter
+        logger.info("Loading LoRA adapter...")
+        self.model = PeftModel.from_pretrained(base_model, str(self.adapter_dir))
+        self.model.eval()
+        
+        logger.info("✓ Model loaded successfully!")
     
     def chat(self, messages: List[Dict[str, str]]) -> str:
         """
@@ -128,21 +153,49 @@ class LocalHFLLMProvider(LLMProvider):
         
         Returns:
             Generated SQL query as string
-        
-        TODO: Implement chat logic:
-        1. Ensure model is loaded via _ensure_loaded()
-        2. Use tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        3. Tokenize and move to device
-        4. Generate with model.generate(...)
-        5. Decode and return generated SQL
         """
+        import torch
+        
         self._ensure_loaded()
         
-        # Placeholder - to be implemented after Kaggle fine-tuning
-        raise NotImplementedError(
-            "LocalHFLLMProvider chat not yet implemented. "
-            "This will be completed after Kaggle fine-tuning produces the adapter."
+        # Format messages using chat template
+        prompt = self.tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True
         )
+        
+        # Tokenize and move to device
+        inputs = self.tokenizer(prompt, return_tensors="pt", return_attention_mask=True)
+        input_ids = inputs["input_ids"].to(self.model.device)
+        attention_mask = inputs["attention_mask"].to(self.model.device)
+        
+        logger.debug("Generating SQL with fine-tuned model...")
+        start = time.time()
+        
+        # Generate response
+        with torch.no_grad():
+            outputs = self.model.generate(
+                input_ids=input_ids,
+                attention_mask=attention_mask,
+                max_new_tokens=256,
+                temperature=0.1,
+                do_sample=True,
+                top_p=0.95,
+                pad_token_id=self.tokenizer.pad_token_id,
+                eos_token_id=self.tokenizer.eos_token_id
+            )
+        
+        # Decode only the generated tokens (exclude prompt)
+        response = self.tokenizer.decode(
+            outputs[0][input_ids.shape[1]:], 
+            skip_special_tokens=True
+        )
+        
+        duration = time.time() - start
+        logger.info("Generated SQL in %.2fs", duration)
+        
+        return response.strip()
 
 
 def get_llm_provider(settings: Settings) -> LLMProvider:
